@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% import "macros.html" as macros %}
+{% block content %}
+
+    <div class="container">
+        {{ macros.render_post(user=user, post=post, current_user=current_user, show_delete=false) }}
+    </div>
+
+    <div class="container text-center">
+    {% call macros.render_form(deleteform, action_text='Delete Post', btn_class='btn btn-danger btn-block') %} 
+        {{ macros.render_field(deleteform.delete, type='delete', placeholder='If you really want to delete this post, type "Delete ' + post.id|string + '"', label_visible=false)}}
+    {% endcall %}
+    </div>
+
+{% endblock %}

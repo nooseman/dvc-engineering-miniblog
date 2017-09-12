@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% import "macros.html" as macros %}
+{% block content %}
+
+    {% for user, post in userposts %}
+        {{ macros.render_post(user=user, post=post,current_user=current_user)}}
+    {% endfor %}
+    
+{% endblock %} 

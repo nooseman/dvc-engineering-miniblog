@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% import "macros.html" as macros%}
+{% block content %}
+<div class="row" style="padding: 10px;">
+    <div class="col-5">
+        <div class="jumbotron">
+            <h3>{{ user.nickname }}</h3>
+
+            {% if user.biography %}
+                <p>{{ user.biography }}</p>
+            {% else %}
+                <p>This user hasn't written a biography yet.</p>
+            {% endif %}
+
+            {% if user == current_user %}
+                <a href="{{ url_for('edit') }}">Edit Your Profile</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-1"></div>
+    <div class="col-5">
+        <h3>{{ user.nickname }}'s posts</h3>
+        {% for post in uposts %}
+        {{ macros.render_post(user=user, post=post, as_card=true, with_nickname=false, current_user=current_user) }}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

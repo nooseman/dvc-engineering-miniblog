@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% import "macros.html" as macros %}
+{% block content %}
+
+    <h1>Edit Profile</h1>
+
+    {% if editform.errors %}
+        <ul class="errors">
+            {% for field_name, field_errors in editform.errors|dictsort if field_errors %}
+                {% for error in field_errors %}
+                    <li>{{ editform[field_name].label }}: {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <div class="jumbotron row">    
+        <div class="col-3"></div>
+        <div class="text-center col-6">
+            {% call macros.render_form(editform, action_url='', action_text='Submit Changes', class_='login-form', btn_class='btn btn-primary btn-block') %}
+                {{ macros.render_field(editform.nickname, label_visible=false,
+                                        placeholder=current_user.nickname, type='nickname') }}
+                {{ macros.render_field(editform.biography, label_visible=false,
+                                        placeholder='About You',
+                                        type='biography') }}
+            {% endcall %}
+        </div>
+        <div class="col-3"></div>
+    </div>
+{% endblock %}

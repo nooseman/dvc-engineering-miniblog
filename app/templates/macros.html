@@ -1,0 +1,135 @@
+{% macro render_field(field, label_visible=true) -%}
+
+    <div class="form-group {% if field.errors %}has-error{% endif %} {{ kwargs.pop('class_', '') }}">
+        {% if field.errors %}
+            {% for e in field.errors %}
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                {{ e }}
+            </div>
+            {% endfor %}
+        {% endif %}
+        {% if (field.type != 'HiddenField' and field.type !='CSRFTokenField') and label_visible %}
+            <label for="{{ field.id }}" class="control-label">{{ field.label }}</label>
+        {% endif %}
+        {{ field(class_='form-control', **kwargs) }}
+    </div>
+{%- endmacro %}
+
+{% macro render_checkbox_field(field) -%}
+    <div class="checkbox">
+        <label>
+            {{ field(type='checkbox', **kwargs) }} {{ field.label }}
+        </label>
+    </div>
+{%- endmacro %}
+
+{% macro render_radio_field(field) -%}
+    {% for value, label, _ in field.iter_choices() %}
+        <div class="radio">
+            <label>
+                <input type="radio" name="{{ field.id }}" id="{{ field.id }}" value="{{ value }}">{{ label }}
+            </label>
+        </div>
+    {% endfor %}
+{%- endmacro %}
+
+{% macro render_form(form, action_url='', action_text='Submit', class_='', btn_class='btn btn-default', name='', enctype='') -%}
+
+    <form method="POST" action="{{ action_url }}" role="form" class="{{ class_ }}" name="{{ name }}" enctype="{{ enctype }}">
+        {{ form.hidden_tag() if form.hidden_tag }}
+        {% if caller %}
+            {{ caller() }}
+        {% else %}
+            {% for f in form %}
+                {% if f.type == 'BooleanField' %}
+                    {{ render_checkbox_field(f) }}
+                {% elif f.type == 'RadioField' %}
+                    {{ render_radio_field(f) }}
+                {% else %}
+                    {{ render_field(f) }}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        <button type="submit" class="{{ btn_class }}">{{ action_text }} </button>
+    </form>
+{%- endmacro %}
+
+{% macro render_post(user, post, current_user, as_card=false, with_nickname=true, show_delete=true) -%}
+    {% if caller %}
+        {{ caller() }}
+    {% else %}
+        {% if as_card %}
+        <div class="container" style="padding: 5px;">            
+            <div class="card" style="padding: 5px;">
+                <div class="container" style="padding: 5px;">
+
+                    {% if current_user==user or current_user.is_administrator %}
+                    {% if show_delete %}
+                    <a class="card-title" href="{{ url_for('delete_post', postid=post.id) }}"><button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button></a>
+                    {% endif %}
+                    {% endif %}
+
+                    {% if post.images %}
+                        <img class="card-img-top" src="{{ url_for('static', filename=('useruploads/' + post.images[0].url)) }}" style="padding: 5px; border-radius: 2%;">
+                    {% endif %}
+                    <h4 class="card-title">{{ post.title }}</h4>
+                    
+                    <p class="card-title text-muted">{% if with_nickname %}{{ user.nickname }} {% endif %} @ {{ post.timestamp.strftime("%I:%M %p") }} on {{ post.timestamp.strftime("%m-%d-%Y") }}</p>
+                    
+                    <p class="card-text">{{ post.summary(40) }}</p>
+                </div>
+            </div>
+            </div>
+
+        {% else %}
+        <div class="jumbotron">    
+            <div class="row inline-block">
+                <div class="col-xs-11 col-sm-11 col-md-11 col-lg-11 col-xl-11">
+                    <h1>{{ post.title }}</h1>
+                </div>
+                <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1">
+                    {% if current_user==user or current_user.is_administrator %}
+                    {% if show_delete %}
+                    <a class="pull-right" href="{{ url_for('delete_post', postid=post.id) }}"><button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button></a>
+                    {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                {% if post.images %}
+                <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
+
+                    {% if post.timestamp %}
+                    <h5>{{ post.timestamp.strftime("%I:%M %p") }} on {{ post.timestamp.strftime("%m-%d-%Y") }} {% if user.nickname %} by <a href="{{ url_for('user', username=user.username) }}">{{ user.nickname }}</a>{% endif %}</h5>
+                    {% endif %}
+
+                    <p style="white-space: pre-wrap;">{{ post.body }}</p>
+                </div>
+                <div class="col-md-1 col-lg-1 col-xl-1"></div>
+                <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                    <div class="row">
+                    {% for image in post.images %}
+                        <div class="card-wrapper" style="padding: 5px;">
+                        <div class="card" style="max-width: 100%; height: auto; padding: 1px;">
+                            <img class="card-img-top img-responsive" src="{{ url_for('static', filename=('useruploads/' + image.url)) }}" style="max-width: 100%; height: auto;" alt="User Content">
+                        </div>
+                        </div>
+                    {% endfor %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                
+                    {% if post.timestamp %}
+                    <h5>{{ post.timestamp.strftime("%I:%M %p") }} on {{ post.timestamp.strftime("%m-%d-%Y") }} {% if user.nickname %} by <a href="{{ url_for('user', username=user.username) }}">{{ user.nickname }}</a>{% endif %}</h5>
+                    {% endif %}
+
+                    <p style="white-space: pre-wrap;">{{ post.body }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>      
+        {% endif %}
+    {% endif %}
+{%- endmacro %}

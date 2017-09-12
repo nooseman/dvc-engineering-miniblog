@@ -1,0 +1,23 @@
+
+
+# Elastic Beanstalk Files
+
+.elasticbeanstalk/*
+
+!.elasticbeanstalk/*.cfg.yml
+
+!.elasticbeanstalk/*.global.yml
+
+__pycache__/
+db_repository/
+flask/
+app.db
+app/static/useruploads/
+run.py
+administrators.txt
+approvedusers.txt
+config.py
+db_create.py
+db_downgrade.py
+db_migrate.py
+db_upgrade.py

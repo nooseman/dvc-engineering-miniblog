@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% import "macros.html" as macros %}
+{% block content %}
+
+    <div class="container">
+        <div class="jumbotron">
+            <div class="row">               
+                <div class="col-xs-12 col-md-12 col-lg-6">
+
+                    <h4>Insert a list of emails to add or remove posting privileges to/from separated by comma</h4>
+                    <hr>
+
+                    {% call macros.render_form(adminform, action_text='Update Permissions',
+                                                btn_class='btn btn-primary btn-block') %}
+                        <h4>Add Posting Privileges</h4>
+                        {{ macros.render_field(adminform.approveemail, label_visible=false, 
+                                                placeholder='example1@email.com, example2@email.com', type='approveemail')}}
+                        <h4>Remove Posting Privileges</h4>
+                        {{ macros.render_field(adminform.disapproveemail, label_visible=false,
+                                                placeholder='example1@email.com, example2@email.com', type='disapproveemail')}}
+                    {% endcall %}
+                </div>
+                <div class="col-xs-12 col-md-12 col-lg-6 text-center">
+                    <h4>Approved Users</h4>
+                    {% if approved_users %}
+                        {% for approved_user in approved_users %}
+                            <p><a href="{{ url_for('user', username=approved_user.username) }}">{{ approved_user.nickname }}:</a> {{ approved_user.email }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
