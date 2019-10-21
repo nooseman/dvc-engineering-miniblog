@@ -28,7 +28,7 @@ psycopg2==2.7.3.1
 python-dateutil==2.6.1
 PyYAML==3.12
 rauth==0.7.3
-requests==2.9.1
+requests==2.20.0
 semantic-version==2.5.0
 six==1.10.0
 SQLAlchemy==1.1.13
