@@ -39,6 +39,6 @@ Tempita==0.5.2
 termcolor==1.1.0
 urllib3==1.22
 websocket-client==0.44.0
-Werkzeug==0.12.2
+Werkzeug==0.15.3
 Whoosh==2.7.4
 WTForms==2.1
